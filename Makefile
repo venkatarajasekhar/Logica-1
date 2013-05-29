@@ -1,2 +1,2 @@
 all:
-	g++ logica.cpp -o logica
+	g++ logica.cpp -o -s logica
