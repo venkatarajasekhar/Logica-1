@@ -1,9 +1,17 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 
-using namespace std;
+#include "automaton.h"
+
 
 int main() {
-	cout << "Hello world!" << endl;
-	
+	std::string automatonFilename;
+	std::fstream automatonFile;
+
+	std::cout << "Digite o nome do arquivo que contem o automato." << std::endl << ">> ";
+	std::cin >> automatonFilename;
+	Automaton * a = new Automaton(automatonFile);
+
 	return 0;
 }

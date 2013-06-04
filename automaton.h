@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 class Automaton {
 private:
@@ -10,6 +11,8 @@ private:
 	std::vector<std::string> vSymbols;
 
 public:
+	Automaton();
+	Automaton(const std::fstream & readFile);
 	void addState(std::string state);
 	void addSymbol(std::string symbol); 
 };
