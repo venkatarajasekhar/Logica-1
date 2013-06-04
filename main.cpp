@@ -14,6 +14,7 @@ int main() {
 
 	automatonFile.open(automatonFilename.c_str(), std::ifstream::in);
 	Automaton * automaton = new Automaton(automatonFile);
+	automaton->printTransitionsTable(std::cout);
 
 	return 0;
 }
