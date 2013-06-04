@@ -10,11 +10,11 @@ private:
 	std::vector<std::string> vStates;
 	std::vector<std::string> vSymbols;
 
-public:
-	Automaton();
-	Automaton(const std::fstream & readFile);
 	void addState(std::string state);
 	void addSymbol(std::string symbol); 
+
+public:
+	Automaton(std::ifstream & readFile);
 };
 
 #endif //__AUTOMATON_H__

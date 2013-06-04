@@ -7,11 +7,13 @@
 
 int main() {
 	std::string automatonFilename;
-	std::fstream automatonFile;
+	std::ifstream automatonFile;
 
 	std::cout << "Digite o nome do arquivo que contem o automato." << std::endl << ">> ";
 	std::cin >> automatonFilename;
-	Automaton * a = new Automaton(automatonFile);
+
+	automatonFile.open(automatonFilename.c_str(), std::ifstream::in);
+	Automaton * automaton = new Automaton(automatonFile);
 
 	return 0;
 }
