@@ -4,19 +4,17 @@
 #include <iostream>
 
 Automaton::Automaton(std::istream & readFile) {
+	readStatesFromFile(readFile);
+	readSymbolsFromFile(readFile);
+	readTransitionsFromFile(readFile);
+}
+
+void Automaton::readStatesFromFile(std::istream & readFile) {
 	int n;
-	std::string word;
+	bool insideQuotes, isFinal;
 	std::string line;
+	std::string stateName;
 
-	bool insideQuotes;
-	bool isFinal;
-
-	int transition[3];	//stateFrom, symbol, stateTo
-	int k;				//counter for the vector above
-
-
-
-	//read states
 
 	readFile >> n;
 	readFile >> line;
@@ -27,8 +25,8 @@ Automaton::Automaton(std::istream & readFile) {
 		if(line[i] == '\"') {
 
 			if(insideQuotes) {
-				addState(word);
-				word.clear();
+				addState(stateName);
+				stateName.clear();
 			}	//closing quote
 
 			else {
@@ -46,13 +44,19 @@ Automaton::Automaton(std::istream & readFile) {
 		else {
 
 			if(insideQuotes) {
-				word += line[i];
+				stateName += line[i];
 			}
 		}
 
 	}
+}
 
-	//read symbols
+void Automaton::readSymbolsFromFile(std::istream & readFile) {
+	int n;
+	bool insideQuotes;
+	std::string line;
+	std::string symbolName;
+
 
 	readFile >> n;
 	readFile >> line;
@@ -61,8 +65,8 @@ Automaton::Automaton(std::istream & readFile) {
 	for(int i = 0; i < line.size(); i++) {
 		if(line[i] == '\"') {
 			if(insideQuotes) {
-				addSymbol(word);
-				word.clear();
+				addSymbol(symbolName);
+				symbolName.clear();
 			}	//closing quote
 
 			insideQuotes = !insideQuotes;
@@ -70,19 +74,21 @@ Automaton::Automaton(std::istream & readFile) {
 
 		else {
 			if(insideQuotes) {
-				word += line[i];
+				symbolName += line[i];
 			}
 		}
 
 	}
+}
 
-	//resize transitions matrix
-	mTransitions.resize(vStates.size());
-	for(int i = 0; i < mTransitions.size(); i++) {
-		mTransitions[i].resize(vSymbols.size());
-	}
+void Automaton::readTransitionsFromFile(std::istream & readFile) {
+	int k, transition[3];
+	bool insideQuotes;
+	std::string tmp;
+	std::string line;
+	
 
-	//read transitions
+
 	while(readFile.good()) {
 		readFile >> line;
 
@@ -92,16 +98,16 @@ Automaton::Automaton(std::istream & readFile) {
 			if(line[i] == '\"') {
 				if(insideQuotes) {
 					if(k == 0)
-						transition[k++] = findStateId(word);
+						transition[k++] = findStateId(tmp);
 					else if(k == 1)
-						transition[k++] = findSymbolId(word);
+						transition[k++] = findSymbolId(tmp);
 					else {
-						transition[k] = findStateId(word);
+						transition[k] = findStateId(tmp);
 						mTransitions[transition[0]][transition[1]].push_back(transition[2]);
 						k = 0;
 					}
 					
-					word.clear();
+					tmp.clear();
 				}	//closing quote
 
 				insideQuotes = !insideQuotes;
@@ -109,7 +115,7 @@ Automaton::Automaton(std::istream & readFile) {
 
 			else {
 				if(insideQuotes) {
-					word += line[i];
+					tmp += line[i];
 				}
 			}
 
@@ -119,10 +125,14 @@ Automaton::Automaton(std::istream & readFile) {
 
 void Automaton::addState(std::string state) {
 	vStates.push_back(state);
+	mTransitions.resize(vStates.size());
 }
 
 void Automaton::addSymbol(std::string symbol) {
 	vSymbols.push_back(symbol);
+	
+	for(int i = 0; i < mTransitions.size(); i++)
+		mTransitions[i].resize(vSymbols.size());
 }
 
 int Automaton::findStateId(std::string state) {

@@ -18,6 +18,10 @@ private:
 	int findStateId(std::string state);
 	int findSymbolId(std::string symbol);
 
+	void readStatesFromFile(std::istream & readFile);
+	void readSymbolsFromFile(std::istream & readFile);
+	void readTransitionsFromFile(std::istream & readFile);
+
 public:
 	Automaton(std::istream & readFile);
 	void printTransitionsTable(std::ostream & output);
