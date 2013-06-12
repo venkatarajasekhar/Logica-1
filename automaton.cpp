@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 
 
 //private constructor
@@ -132,7 +133,9 @@ void Automaton::readTransitionsFromFile(std::istream & readFile) {
 void Automaton::addState(std::string state, bool isFinal) {
 	vStates.push_back(state);
 	vFinal.push_back(isFinal);
+
 	mTransitions.resize(vStates.size());
+	mTransitions[vStates.size() - 1].resize(vSymbols.size());
 }
 
 void Automaton::addSymbol(std::string symbol) {
@@ -288,8 +291,8 @@ Automaton * Automaton::getDeterministic() {
 		}
 	}
 
-	//finds a state 'i' reachable by empty transitions, but not leavable by empty transitions,
-	//copy its transtions to states 'j' reaching there and removes the empty transitions leading to 'i'
+	//finds a state 'i' with incoming empty transitions, but no outgoing empty transitions,
+	//copy its transtions to states 'j' able to reach 'i' and removes these empty transitions
 	do {
 		removed = 0;
 
@@ -318,6 +321,51 @@ Automaton * Automaton::getDeterministic() {
 
 	} while(removed > 0);
 	
+
+	//finds a state 'i' that has a non-determinism (two or more outputs for the same symbol),
+	//creates a state representing all those symbols and change the transition to this one
+	do {
+		removed = 0;
+
+		for(i = 0; i < b->getNStates(); i++) {
+			for(j = 0; j < b->getNSymbols(); j++) {
+				if(b->mTransitions[i][j].size() > 1) {
+					int newStateId;
+					std::string newStateName;
+					bool isFinal;
+
+					//fills newStateName and isFinal
+					newStateName = b->vStates[mTransitions[i][j].front()];
+					std::list<int>::iterator it = b->mTransitions[i][j].begin();
+					isFinal = vFinal[*it];
+					++it;
+					for(; it != b->mTransitions[i][j].end(); it++) {
+						newStateName += "_" + b->vStates[*it];
+						isFinal = isFinal || vFinal[*it];
+					}
+
+					//guarantees the newStateName is unique
+					while(b->findStateId(newStateName) != -1)
+						newStateName += '_';
+
+					//adds newStateName to b
+					b->addState(newStateName, isFinal);
+					newStateId = b->findStateId(newStateName);
+
+					//copy the old state's outgoing transtions to the new state
+					for(std::list<int>::iterator it = b->mTransitions[i][j].begin(); it != b->mTransitions[i][j].end(); it++)
+						b->copyOutgoingTransitions(*it, newStateId);
+
+					//removes the transitions going to the old states and adds a transtion going to the new one 
+					b->mTransitions[i][j].clear();
+					b->mTransitions[i][j].push_back(newStateId);
+
+					removed++;
+				}
+			}
+		}
+	} while(removed > 0);
+		
 
 	return b;
 }

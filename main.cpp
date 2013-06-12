@@ -22,13 +22,13 @@ int main() {
 	std::cout << "====== Problema Inicial ======" << std::endl;
 	automaton->printTransitionsTable(std::cout);
 	std::cout << std::endl;
-	std::cout << "A cadeia foi aceita de " << automaton->testString("a") << " formas diferentes" << std::endl;
-	std::cout << "==========================" << std::endl << std::endl << std::endl;
+	std::cout << "A cadeia foi aceita de " << automaton->testString("acd") << " formas diferentes" << std::endl;
+	std::cout << "==============================" << std::endl << std::endl << std::endl;
 
 	std::cout << "====== Problema Alterado ======" << std::endl;
 	automaton2->printTransitionsTable(std::cout);
 	std::cout << std::endl;
-	std::cout << "A cadeia foi aceita de " << automaton2->testString("a") << " formas diferentes" << std::endl;
+	std::cout << "A cadeia foi aceita de " << automaton2->testString("acd") << " formas diferentes" << std::endl;
 	std::cout << "===============================" << std::endl << std::endl;
 
 	return 0;
